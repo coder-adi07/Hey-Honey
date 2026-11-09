@@ -88,11 +88,11 @@ export default function Navbar() {
             <div className="flex items-center lg:hidden">
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                onClick={() => setMobileMenuOpen(true)}
                 className="p-2 -ml-2 rounded-lg text-honey-900 hover:text-honey-500 hover:bg-honey-200/50 transition-colors"
-                aria-label="Toggle navigation menu"
+                aria-label="Open navigation menu"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <Menu className="w-6 h-6" />
               </button>
             </div>
 
@@ -253,139 +253,197 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Slide-In Navigation Panel */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setMobileMenuOpen(false)}
-                className="fixed inset-0 top-[102px] bg-charcoal-900/50 backdrop-blur-sm z-30 lg:hidden"
-              />
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.28 }}
-                className="lg:hidden border-b border-honey-200 bg-cream-50 overflow-hidden relative z-40"
-              >
-                <div className="px-6 py-6 space-y-4 max-h-[75vh] overflow-y-auto">
-                  <div className="space-y-1">
-                    <Link
-                      href="/"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-lg text-base font-serif font-semibold text-honey-900 hover:text-honey-500 hover:bg-honey-100 transition-colors"
-                    >
-                      Home
-                    </Link>
+      {/* Mobile Slide-Over Navigation Drawer */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+            {/* Darkened Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-charcoal-900/60"
+              aria-hidden="true"
+            />
 
-                    {/* Shop Honey with Collapsible Submenu */}
-                    <div className="rounded-xl overflow-hidden bg-cream-100/60 border border-honey-200/60">
-                      <div className="flex items-center justify-between px-3 py-2.5 hover:bg-honey-100/80 transition-colors">
-                        <Link
-                          href="/shop"
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="flex-1 text-base font-serif font-semibold text-honey-900 hover:text-honey-500 transition-colors"
-                        >
-                          Shop Honey
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => setMobileShopOpen(!mobileShopOpen)}
-                          className="p-1.5 rounded-lg text-honey-800 hover:text-honey-500 hover:bg-honey-200/70 transition-colors flex items-center gap-1"
-                          aria-label="Toggle Shop categories"
-                        >
-                          <span className="text-[11px] text-charcoal-500 font-sans">
-                            {mobileShopOpen ? 'Hide' : 'Categories'}
-                          </span>
-                          <ChevronDown
-                            className={`w-4 h-4 text-honey-600 transition-transform duration-200 ${
-                              mobileShopOpen ? 'rotate-180 text-honey-500' : ''
-                            }`}
-                          />
-                        </button>
-                      </div>
+            {/* Slide-in Drawer from Left */}
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-cream-50 shadow-2xl flex flex-col z-50 border-r border-honey-200"
+            >
+              {/* Drawer Top Header: Logo + Close Button */}
+              <div className="p-4 border-b border-honey-200/80 bg-cream-100 flex items-center justify-between">
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2"
+                >
+                  <div className="relative w-36 h-10">
+                    <Image
+                      src="/assets/logo/heyhoney-logo.png"
+                      alt="Hey Honey — Artisan Michigan Honey"
+                      fill
+                      className="object-contain object-left"
+                    />
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 rounded-full text-charcoal-700 hover:text-honey-600 hover:bg-honey-200/60 transition-colors"
+                  aria-label="Close navigation menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-                      {/* Submenu Accordion */}
-                      <AnimatePresence>
-                        {mobileShopOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.24 }}
-                            className="overflow-hidden border-t border-honey-200/80 bg-white px-4 py-2 space-y-1"
-                          >
-                            <Link
-                              href="/shop"
-                              onClick={() => setMobileMenuOpen(false)}
-                              className="block py-2 text-xs font-bold text-honey-800 hover:text-honey-500 uppercase tracking-wider border-b border-honey-100 transition-colors"
-                            >
-                              View All Products (19 Harvests) →
-                            </Link>
-                            {categories.map((c) => (
-                              <Link
-                                key={c.id}
-                                href={`/shop/${c.slug}`}
-                                onClick={() => setMobileMenuOpen(false)}
-                                className="block py-2 text-sm text-charcoal-700 hover:text-honey-500 flex items-center justify-between transition-colors"
-                              >
-                                <span>{c.name}</span>
-                                <span className="text-xs text-honey-500">→</span>
-                              </Link>
-                            ))}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+              {/* Scrollable Navigation Body */}
+              <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4">
+                {/* Search Bar Shortcut */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setIsSearchOpen(true);
+                  }}
+                  className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-cream-100/90 border border-honey-200 text-charcoal-500 text-sm hover:border-honey-400 hover:bg-honey-50 transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <Search className="w-4 h-4 text-honey-600" />
+                    <span>Search honey, flavors, balm...</span>
+                  </span>
+                  <span className="text-[11px] bg-honey-200/80 text-honey-900 px-2 py-0.5 rounded-full font-medium">
+                    Find
+                  </span>
+                </button>
+
+                {/* Primary Nav Links */}
+                <div className="space-y-1">
+                  <Link
+                    href="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-base font-serif font-bold text-charcoal-900 hover:text-honey-600 hover:bg-honey-100/70 transition-colors"
+                  >
+                    Home
+                  </Link>
+
+                  {/* Shop Honey Collapsible Accordion */}
+                  <div className="rounded-xl overflow-hidden bg-cream-100/70 border border-honey-200/70">
+                    <div className="flex items-center justify-between px-3 py-2.5">
+                      <Link
+                        href="/shop"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex-1 text-base font-serif font-bold text-charcoal-900 hover:text-honey-600 transition-colors"
+                      >
+                        Shop Honey
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setMobileShopOpen(!mobileShopOpen)}
+                        className="p-1.5 px-2.5 rounded-lg text-honey-800 bg-honey-200/50 hover:bg-honey-200 hover:text-honey-600 transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                        aria-label="Toggle Shop categories"
+                      >
+                        <span>{mobileShopOpen ? 'Hide' : 'Categories'}</span>
+                        <ChevronDown
+                          className={`w-3.5 h-3.5 text-honey-700 transition-transform duration-200 ${
+                            mobileShopOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
                     </div>
 
-                    <Link
-                      href="/our-story"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-lg text-base font-serif font-semibold text-honey-900 hover:text-honey-500 hover:bg-honey-100 transition-colors"
-                    >
-                      Our Story (Heritage Since 1935)
-                    </Link>
-                    <Link
-                      href="/blog"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-lg text-base font-serif font-semibold text-honey-900 hover:text-honey-500 hover:bg-honey-100 transition-colors"
-                    >
-                      The Hive Blog
-                    </Link>
-                    <Link
-                      href="/contact"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block px-3 py-2.5 rounded-lg text-base font-serif font-semibold text-honey-900 hover:text-honey-500 hover:bg-honey-100 transition-colors"
-                    >
-                      Contact Jay Jermo
-                    </Link>
+                    {/* Submenu Accordion Items */}
+                    <AnimatePresence>
+                      {mobileShopOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.22 }}
+                          className="overflow-hidden border-t border-honey-200/70 bg-cream-50 px-3 py-2 space-y-1"
+                        >
+                          <Link
+                            href="/shop"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="block py-2 px-2.5 rounded-lg text-xs font-bold text-honey-800 hover:text-honey-600 hover:bg-honey-100/80 uppercase tracking-wider border-b border-honey-200/40 transition-colors"
+                          >
+                            View All 19 Harvests →
+                          </Link>
+                          {categories.map((c) => (
+                            <Link
+                              key={c.id}
+                              href={`/shop/${c.slug}`}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className="flex items-center justify-between py-2 px-2.5 rounded-lg text-sm font-medium text-charcoal-800 hover:text-honey-600 hover:bg-honey-100/60 transition-colors"
+                            >
+                              <span>{c.name}</span>
+                              <span className="text-xs text-honey-500 font-bold">→</span>
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
-                  <div className="pt-4 border-t border-honey-200 space-y-3">
-                    <Link
-                      href="/shop"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="w-full py-3 px-4 rounded-full bg-honey-500 hover:bg-honey-600 text-cream-50 font-medium text-center text-sm flex items-center justify-center shadow-sm transition-colors"
+                  <Link
+                    href="/our-story"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-base font-serif font-bold text-charcoal-900 hover:text-honey-600 hover:bg-honey-100/70 transition-colors"
+                  >
+                    Our Story <span className="text-xs font-sans font-normal text-honey-700">(Since 1935)</span>
+                  </Link>
+
+                  <Link
+                    href="/blog"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-base font-serif font-bold text-charcoal-900 hover:text-honey-600 hover:bg-honey-100/70 transition-colors"
+                  >
+                    The Hive Blog
+                  </Link>
+
+                  <Link
+                    href="/contact"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-base font-serif font-bold text-charcoal-900 hover:text-honey-600 hover:bg-honey-100/70 transition-colors"
+                  >
+                    Contact & Farmers Markets
+                  </Link>
+                </div>
+
+                {/* Bottom CTA Block */}
+                <div className="pt-4 border-t border-honey-200 space-y-3">
+                  <Link
+                    href="/shop"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full py-3 px-4 rounded-full bg-honey-500 hover:bg-honey-600 active:scale-95 text-cream-50 font-semibold text-center text-sm flex items-center justify-center shadow-md transition-all"
+                  >
+                    Explore Honey Collection
+                  </Link>
+                  <div className="text-center text-xs text-charcoal-600">
+                    Call Apiary:{' '}
+                    <a
+                      href="tel:+12699296198"
+                      className="text-honey-700 font-bold underline hover:text-honey-500 transition-colors"
                     >
-                      Explore Honey Collection
-                    </Link>
-                    <div className="text-center text-xs text-charcoal-500">
-                      Need help? Call{' '}
-                      <a href="tel:+12699296198" className="text-honey-700 font-semibold underline hover:text-honey-500 transition-colors">
-                        (269) 929-6198
-                      </a>
-                    </div>
+                      (269) 929-6198
+                    </a>
+                  </div>
+                  <div className="text-center text-[11px] text-charcoal-400">
+                    Kalamazoo & Ann Arbor, Michigan
                   </div>
                 </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </header>
+              </div>
+            </motion.aside>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
